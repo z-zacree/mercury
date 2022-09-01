@@ -7,7 +7,7 @@ const Home: NextPage = () => {
       title="Home"
       description="Welcome to Mercury, a blog website catered to finding places of interest in Singapore."
     >
-      <span>Landing</span>
+      <span>Home</span>
     </Layout>
   );
 };

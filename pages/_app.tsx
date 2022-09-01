@@ -7,6 +7,7 @@ import {
 import { mode } from "@chakra-ui/theme-tools";
 import type { AppProps } from "next/app";
 import { FC } from "react";
+import AuthProvider from "../util/context/AuthContext";
 
 if (typeof window !== "undefined") {
   const colorMode = localStorage.getItem("chakra-ui-color-mode");
@@ -58,7 +59,9 @@ const customTheme = extendTheme({
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <ChakraProvider theme={customTheme}>
-      <Component {...pageProps} />
+      <AuthProvider>
+        <Component {...pageProps} />
+      </AuthProvider>
     </ChakraProvider>
   );
 };
