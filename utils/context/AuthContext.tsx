@@ -1,7 +1,7 @@
 import { createContext, FC, PropsWithChildren, useEffect, useState } from "react";
 import { User } from "firebase/auth";
 import { auth, fs } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { UserData } from "../../models/user";
 
 interface AuthProps {
@@ -24,9 +24,11 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
-        getDoc(doc(fs, "users", user.uid)).then((doc) => {
+        const unsub = onSnapshot(doc(fs, "users", user.uid), (doc) => {
           setContextValue({ user, data: doc.data() as UserData, isLoading: false });
         });
+
+        return unsub;
       } else {
         setContextValue({ user: null, data: null, isLoading: false });
       }

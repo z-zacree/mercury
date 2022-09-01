@@ -6,8 +6,9 @@ import {
 } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
 import type { AppProps } from "next/app";
+import Head from "next/head";
 import { FC } from "react";
-import AuthProvider from "../util/context/AuthContext";
+import AuthProvider from "../utils/context/AuthContext";
 
 if (typeof window !== "undefined") {
   const colorMode = localStorage.getItem("chakra-ui-color-mode");

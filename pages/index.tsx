@@ -1,12 +1,10 @@
 import type { NextPage } from "next";
 import { Layout } from "@layouts";
 import { useContext } from "react";
-import { AuthContext } from "../util/context/AuthContext";
+import { AuthContext } from "../utils/context/AuthContext";
 
 const Landing: NextPage = () => {
   const { user, data } = useContext(AuthContext);
-
-  console.log(user, data);
   return (
     <Layout
       title={"landing"}
