@@ -1,30 +1,29 @@
-import { NextPage } from "next";
-import { AuthLayout } from "@layouts";
-import { AuthHeader, FormContainer } from "@components";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import {
-  VStack,
-  Stack,
+  Button,
   FormControl,
-  FormLabel,
-  Input,
   FormErrorMessage,
+  FormLabel,
+  IconButton,
+  Input,
   InputGroup,
   InputRightElement,
-  IconButton,
-  Button,
   Link,
+  Stack,
   Text,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
-import { Formik, Form } from "formik";
+import { AuthHeader, FormContainer } from "@components";
+import { AuthLayout } from "@layouts";
+import { AuthErrorCodes, createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { Form, Formik } from "formik";
+import { NextPage } from "next";
 import { default as NextLink } from "next/link";
-import { createUserWithEmailAndPassword, AuthErrorCodes } from "firebase/auth";
-import { setDoc, doc, Timestamp } from "firebase/firestore";
-import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
-import { auth, fs, AuthErrorResponse } from "../../utils/firebase";
 import * as Yup from "yup";
+import { auth, AuthErrorResponse, fs } from "../../utils/firebase";
 interface RegisterData {
   email: string;
   password: string;

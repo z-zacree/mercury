@@ -1,8 +1,8 @@
-import { NextPage } from "next";
-import { Layout } from "@layouts";
 import { Button } from "@chakra-ui/react";
+import { Layout } from "@layouts";
 import { auth } from "@utils/firebase";
 import { signOut } from "firebase/auth";
+import { NextPage } from "next";
 
 const Home: NextPage = () => {
   return (

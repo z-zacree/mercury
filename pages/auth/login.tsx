@@ -48,7 +48,6 @@ const Login: NextPage = () => {
     signInWithEmailAndPassword(auth, fData.email, fData.password)
       .then(({ user }) => {
         setLoading(false);
-        router.push("/home");
         if (!toast.isActive("login-success")) {
           toast({
             id: "login-success",

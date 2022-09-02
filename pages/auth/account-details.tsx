@@ -1,14 +1,23 @@
+import { DetailLayout } from "@layouts";
+import { AuthContext } from "@utils/context/AuthProvider";
 import { NextPage } from "next";
-import { AuthLayout } from "@layouts";
+import { useContext } from "react";
 
 const AccountSignUpDetails: NextPage = () => {
+  const {
+    state: { user, data, isLoading },
+  } = useContext(AuthContext);
+  console.log(data);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
   return (
-    <AuthLayout
-      title="Login"
-      description="Login to your account with Mercury. We support integrations with Google, Github or Email to upload, save and like blog posts for free!"
+    <DetailLayout
+      title="Details"
+      description="Welcome to Mercury, now let's get some details about you."
     >
-      <h1>Login</h1>
-    </AuthLayout>
+      <h1>Welcome to Mercury, now let's get some details about you.</h1>
+    </DetailLayout>
   );
 };
 

@@ -1,21 +1,45 @@
-import { FC, PropsWithChildren, useContext } from "react";
-import { Layout } from "..";
-import { AuthContext } from "utils/context/AuthContext";
 import { Box, Center, CircularProgress, Divider, Flex, Text } from "@chakra-ui/react";
+import { AuthContext } from "@utils/context/AuthProvider";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import AuthLayout from ".";
+import { FC, PropsWithChildren, useContext, useEffect } from "react";
+import { Layout } from "..";
 
 interface LayoutProps extends PropsWithChildren {
   title?: string;
   description: string;
 }
 
-const AccountDetailsLayout: FC<LayoutProps> = ({ children, description, title }) => {
+const AccDetailsLayout: FC<LayoutProps> = ({ children, description, title }) => {
   const router = useRouter();
-  const { user, data, isLoading } = useContext(AuthContext);
+  const {
+    state: { user, data, isLoading },
+  } = useContext(AuthContext);
+  useEffect(() => {
+    if (!isLoading && data?.fullname && data?.username) {
+      router.push("/home");
+    }
+  }, [user]);
 
-  return <AuthLayout title={title} description={description}></AuthLayout>;
+  return (
+    <Layout title={title} description={description}>
+      {isLoading || (data?.fullname && data?.username) ? (
+        <Center minH={"100vh"} gap={4}>
+          <CircularProgress isIndeterminate color={"gray"} size={8} />
+          <Text fontWeight={200}>Hold on — getting this page ready for you</Text>
+          <Box pos={"absolute"} top={0} left={0} right={0}>
+            <Flex m={4} justify={"space-between"}>
+              <Text fontFamily={"montserrat"} fontWeight={500} fontSize={"lg"} children="Mercury" />
+              <Image src={"/Logo@2x.png"} width={28} height={28} />
+            </Flex>
+            <Divider />
+          </Box>
+        </Center>
+      ) : (
+        children
+      )}
+    </Layout>
+  );
 };
 
-export default AccountDetailsLayout;
+export default AccDetailsLayout;

@@ -1,16 +1,18 @@
-import type { NextPage } from "next";
+import { Button } from "@chakra-ui/react";
 import { Layout } from "@layouts";
-import { useContext } from "react";
-import { AuthContext } from "../utils/context/AuthContext";
+import type { NextPage } from "next";
+import { useRouter } from "next/router";
 
 const Landing: NextPage = () => {
-  const { user, data } = useContext(AuthContext);
+  const router = useRouter();
+
   return (
     <Layout
       title={"landing"}
       description="Welcome to Mercury, a blog website catered to finding places of interest in Singapore."
     >
       <span>Landing</span>
+      <Button onClick={() => router.push("/home")}></Button>
     </Layout>
   );
 };

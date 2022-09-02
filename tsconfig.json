@@ -18,6 +18,7 @@
     "paths": {
       "@components": ["components/index.ts"],
       "@layouts": ["layouts/index.ts"],
+      "@models/*": ["models/*"],
       "@utils/*": ["utils/*"]
     }
   },

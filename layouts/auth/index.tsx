@@ -1,8 +1,8 @@
 import { Box, Center, CircularProgress, Divider, Flex, Text } from "@chakra-ui/react";
+import { AuthContext } from "@utils/context/AuthProvider";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { FC, PropsWithChildren, useContext, useEffect } from "react";
-import { AuthContext } from "utils/context/AuthContext";
 import { Layout } from "..";
 
 interface LayoutProps extends PropsWithChildren {
@@ -12,11 +12,13 @@ interface LayoutProps extends PropsWithChildren {
 
 const AuthLayout: FC<LayoutProps> = ({ children, description, title }) => {
   const router = useRouter();
-  const { user, data, isLoading } = useContext(AuthContext);
+  const {
+    state: { user, data, isLoading },
+  } = useContext(AuthContext);
   useEffect(() => {
     if (!isLoading && user) {
-      if (!data?.fullname || !data?.username) router.push("/auth/details");
-      router.push("/home");
+      if (!data?.fullname || !data?.username) router.push("/auth/account-details");
+      else router.push("/home");
     }
   }, [user]);
 
