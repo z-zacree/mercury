@@ -21,7 +21,7 @@ import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { Form, Formik } from "formik";
 import { NextPage } from "next";
 import { default as NextLink } from "next/link";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import * as Yup from "yup";
 import { auth, AuthErrorResponse, fs } from "../../utils/firebase";
 interface RegisterData {
@@ -36,7 +36,7 @@ const Register: NextPage = () => {
   const [showCPW, setShowCPW] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
-  const handleSubmit = useCallback(async (values: RegisterData) => {
+  const handleSubmit = async (values: RegisterData) => {
     setLoading(true);
     const fData = {
       email: values.email.trim(),
@@ -88,7 +88,7 @@ const Register: NextPage = () => {
           });
         }
       });
-  }, []);
+  };
 
   return (
     <AuthLayout

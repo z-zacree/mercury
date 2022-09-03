@@ -39,7 +39,7 @@ const Login: NextPage = () => {
   const [showPW, setShowPW] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
-  const handleSubmit = useCallback(async (values: LoginData) => {
+  const handleSubmit = async (values: LoginData) => {
     setLoading(true);
     const fData = {
       email: values.email.trim(),
@@ -86,7 +86,7 @@ const Login: NextPage = () => {
           });
         }
       });
-  }, []);
+  };
 
   return (
     <AuthLayout
