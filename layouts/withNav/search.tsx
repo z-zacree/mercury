@@ -1,8 +1,8 @@
 import {
-  InputGroup,
-  InputLeftElement,
   IconButton,
   Input,
+  InputGroup,
+  InputLeftElement,
   InputRightElement,
 } from "@chakra-ui/react";
 import { FC, useState } from "react";

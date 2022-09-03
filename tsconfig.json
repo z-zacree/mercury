@@ -18,7 +18,8 @@
     "paths": {
       "@components": ["components/index.ts"],
       "@layouts": ["layouts/index.ts"],
-      "@models/*": ["models/*"],
+      "@hooks": ["utils/hooks/index.ts"],
+      "@models": ["utils/models/index.ts"],
       "@utils/*": ["utils/*"]
     }
   },

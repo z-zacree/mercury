@@ -1,4 +1,4 @@
-import { Heading, Stack, Text, Link } from "@chakra-ui/react";
+import { Heading, Link, Stack, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
 const AuthHeader: FC<{ heading: string }> = ({ heading }) => {

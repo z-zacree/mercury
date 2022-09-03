@@ -1,3 +1,4 @@
+import { useColorModeValue } from "@chakra-ui/react";
 import { FC } from "react";
 
 interface ComponentProps {
@@ -16,7 +17,7 @@ const AnimatedMenuIcon: FC<ComponentProps> = ({ isOpen }) => {
           border-radius: 2px;
           position: absolute;
           transition: 0.2s linear 0s;
-          background-color: white;
+          background-color: ${useColorModeValue("black", "white")};
         }
 
         .topOpen {
@@ -34,7 +35,7 @@ const AnimatedMenuIcon: FC<ComponentProps> = ({ isOpen }) => {
           border-radius: 2px;
           position: absolute;
           transition: 0.2s linear 0s;
-          background-color: white;
+          background-color: ${useColorModeValue("black", "white")};
         }
 
         .bottomOpen {

@@ -3,6 +3,8 @@ import {
   Button,
   chakra,
   Checkbox,
+  Divider,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -13,10 +15,11 @@ import {
   Link,
   Stack,
   Text,
+  useColorModeValue,
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { AuthHeader, FormContainer } from "@components";
+import { AuthHeader, FormContainer, GithubButton, GoogleButton } from "@components";
 import { AuthLayout } from "@layouts";
 import { auth, AuthErrorResponse } from "@utils/firebase";
 import { AuthErrorCodes, signInWithEmailAndPassword } from "firebase/auth";
@@ -24,7 +27,7 @@ import { Form, Formik } from "formik";
 import { NextPage } from "next";
 import { default as NextLink } from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import * as Yup from "yup";
 
 interface LoginData {
@@ -156,12 +159,7 @@ const Login: NextPage = () => {
                     </Checkbox>
                     <chakra.span color={"purple.400"}>Forgot password?</chakra.span>
                   </Stack>
-                  <Button
-                    type={"submit"}
-                    disabled={isLoading}
-                    isLoading={isLoading}
-                    colorScheme={"purple"}
-                  >
+                  <Button type={"submit"} disabled={isLoading} isLoading={isLoading}>
                     {isLoading ? "Attempting to sign you in" : "Sign in"}
                   </Button>
                 </Stack>
@@ -171,10 +169,19 @@ const Login: NextPage = () => {
         </FormContainer>
         <Text align={"center"}>
           No account?{" "}
-          <NextLink href={"/register"} passHref>
+          <NextLink href={"/auth/register"} passHref>
             <Link color={"purple.400"}>Create one now!</Link>
           </NextLink>
         </Text>
+        <VStack gap={2}>
+          <Flex w={"sm"} align={"center"} gap={2}>
+            <Divider borderColor={useColorModeValue("blackAlpha.400", "whiteAlpha.400")} />
+            <Text>Or</Text>
+            <Divider borderColor={useColorModeValue("blackAlpha.400", "whiteAlpha.400")} />
+          </Flex>
+          <GithubButton />
+          <GoogleButton />
+        </VStack>
       </VStack>
     </AuthLayout>
   );

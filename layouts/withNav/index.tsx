@@ -10,7 +10,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { AuthContext } from "@utils/context/AuthProvider";
-import { useWindowSize } from "@utils/index";
+import { useWindowSize } from "@utils/hooks/index";
 import { useRouter } from "next/router";
 import { FC, PropsWithChildren, useContext, useRef } from "react";
 import { TbSearch } from "react-icons/tb";

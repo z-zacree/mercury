@@ -1,6 +1,8 @@
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import {
   Button,
+  Divider,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -11,11 +13,13 @@ import {
   Link,
   Stack,
   Text,
+  useColorModeValue,
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { AuthHeader, FormContainer } from "@components";
+import { AuthHeader, FormContainer, GithubButton, GoogleButton } from "@components";
 import { AuthLayout } from "@layouts";
+import { auth, AuthErrorResponse, fs } from "@utils/firebase";
 import { AuthErrorCodes, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { Form, Formik } from "formik";
@@ -23,7 +27,6 @@ import { NextPage } from "next";
 import { default as NextLink } from "next/link";
 import { useState } from "react";
 import * as Yup from "yup";
-import { auth, AuthErrorResponse, fs } from "../../utils/firebase";
 interface RegisterData {
   email: string;
   password: string;
@@ -174,12 +177,7 @@ const Register: NextPage = () => {
                     </InputGroup>
                     <FormErrorMessage>{errors.confirmPassword}</FormErrorMessage>
                   </FormControl>
-                  <Button
-                    type={"submit"}
-                    disabled={isLoading}
-                    isLoading={isLoading}
-                    colorScheme={"purple"}
-                  >
+                  <Button type={"submit"} disabled={isLoading} isLoading={isLoading}>
                     {isLoading ? "Attempting to register an account" : "Register now!"}
                   </Button>
                 </Stack>
@@ -193,6 +191,15 @@ const Register: NextPage = () => {
             <Link color={"purple.400"}>Log in now!</Link>
           </NextLink>
         </Text>
+        <VStack gap={2}>
+          <Flex w={"sm"} align={"center"} gap={2}>
+            <Divider borderColor={useColorModeValue("blackAlpha.400", "whiteAlpha.400")} />
+            <Text>Or</Text>
+            <Divider borderColor={useColorModeValue("blackAlpha.400", "whiteAlpha.400")} />
+          </Flex>
+          <GithubButton />
+          <GoogleButton />
+        </VStack>
       </VStack>
     </AuthLayout>
   );

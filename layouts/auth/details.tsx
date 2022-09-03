@@ -15,11 +15,12 @@ const AccDetailsLayout: FC<LayoutProps> = ({ children, description, title }) => 
   const {
     state: { user, data, isLoading },
   } = useContext(AuthContext);
+
   useEffect(() => {
     if (!isLoading && data?.fullname && data?.username) {
       router.push("/home");
     }
-  }, [user]);
+  }, [user, data]);
 
   return (
     <Layout title={title} description={description}>

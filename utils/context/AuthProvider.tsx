@@ -1,4 +1,4 @@
-import { UserData } from "@models/User";
+import { UserData } from "@models";
 import { User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import {
