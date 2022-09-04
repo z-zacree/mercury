@@ -16,7 +16,7 @@ import { DetailLayout } from "@layouts";
 import { AuthContext } from "@utils/context/AuthProvider";
 import { fs } from "@utils/firebase";
 import { UserData } from "@utils/models";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { NextPage } from "next";
 import Image from "next/image";
 import { Fragment, ReactNode, useContext, useEffect, useState } from "react";
@@ -27,6 +27,7 @@ const AccountSignUpDetails: NextPage = () => {
   const [pageIndex, setIndex] = useState(0);
   const [fullname, setFullname] = useState("");
   const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(false);
   const {
     state: { user, data },
     dispatch,
@@ -36,8 +37,8 @@ const AccountSignUpDetails: NextPage = () => {
     <Center h={"full"}>
       <Box>
         <Heading>Welcome to Mercury!</Heading>
-        <Text color={useColorModeValue("blackAlpha.500", "whiteAlpha.500")}>
-          Now that you&apos;re here, let&apos;s get you set up
+        <Text color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}>
+          Now that you&apos;re here, let&apos;s get you set up.
         </Text>
 
         <Button mt={4} onClick={() => setIndex(1)} gap={4}>
@@ -59,18 +60,19 @@ const AccountSignUpDetails: NextPage = () => {
         <VStack gap={4} align={"start"}>
           <Box>
             <Heading>What is your full name?</Heading>
-            <Text color={useColorModeValue("blackAlpha.500", "whiteAlpha.500")}>
+            <Text color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}>
               Your full name. Don&apos;t worry though, we won&apos;t share this with anyone else!
             </Text>
           </Box>
           <Input
-            color={"black"}
             value={fullname}
             variant={"flushed"}
             onChange={({ currentTarget }) => setFullname(currentTarget.value)}
+            focusBorderColor={useColorModeValue("black", "white")}
           />
 
           <Button
+            isDisabled={fullname.trim().length === 0}
             onClick={() => {
               if (fullname.trim().length > 0) setIndex(2);
             }}
@@ -95,30 +97,44 @@ const AccountSignUpDetails: NextPage = () => {
         <VStack gap={4} align={"start"}>
           <Box>
             <Heading>How should others address you?</Heading>
-            <Text color={useColorModeValue("blackAlpha.500", "whiteAlpha.500")}>
+            <Text color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}>
               Your username. This will be displayed to other users.
             </Text>
           </Box>
           <Input
-            color={"black"}
             value={username}
             variant={"flushed"}
             onChange={({ currentTarget }) => setUsername(currentTarget.value)}
+            focusBorderColor={useColorModeValue("black", "white")}
           />
 
           <Button
+            isDisabled={username.trim().length === 0 || loading}
+            isLoading={loading}
             onClick={() => {
               if (username.trim().length > 0) handleSubmit();
             }}
             gap={4}
           >
-            Finish
+            Submit
             <Kbd>
               <MdKeyboardReturn />
             </Kbd>
           </Button>
         </VStack>
       </Flex>
+    </Center>,
+    <Center h={"full"} mr={[12, null, null, 0]}>
+      <Box>
+        <Heading>Nice — we are done!</Heading>
+
+        <Button mt={4} onClick={() => setIndex(1)} gap={4}>
+          Back to home
+          <Kbd display={{ base: "none", lg: "unset" }}>
+            <MdKeyboardReturn />
+          </Kbd>
+        </Button>
+      </Box>
     </Center>,
   ];
 
@@ -134,7 +150,8 @@ const AccountSignUpDetails: NextPage = () => {
         case 2:
           if (e.key === "Enter" && username.trim().length > 0) handleSubmit();
           break;
-        default:
+        case 3:
+          if (e.key === "Enter") handleFinish();
           break;
       }
     };
@@ -144,13 +161,21 @@ const AccountSignUpDetails: NextPage = () => {
   }, [pageIndex, fullname, username]);
 
   const handleSubmit = async () => {
+    setLoading(true);
     const fData = {
       fullname: fullname.trim(),
       username: username.trim(),
     };
 
     setDoc(doc(fs, "users", user!.uid), fData, { merge: true }).then(() => {
-      dispatch({ type: "SET_DATA", payload: { data: { ...data, ...fData } as UserData } });
+      setLoading(false);
+      setIndex(3);
+    });
+  };
+
+  const handleFinish = () => {
+    getDoc(doc(fs, "users", user!.uid)).then((doc) => {
+      dispatch({ type: "SET_DATA", payload: { data: { ...data, ...doc.data() } as UserData } });
     });
   };
   return (
@@ -159,7 +184,7 @@ const AccountSignUpDetails: NextPage = () => {
       description="Welcome to Mercury, now let's get some details about you."
     >
       <Flex minH={"100vh"} gap={4}>
-        <Box flex={{ base: 0, lg: 3.5 }} pos={"relative"} filter={"blur(8px)"}>
+        <Box flex={{ base: 0, lg: 3.5 }} pos={"relative"} filter={"blur(6px)"}>
           <Image
             priority
             layout={"fill"}

@@ -1,8 +1,6 @@
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import {
   Button,
-  chakra,
-  Checkbox,
   Divider,
   Flex,
   FormControl,
@@ -21,41 +19,45 @@ import {
 } from "@chakra-ui/react";
 import { AuthHeader, FormContainer, GithubButton, GoogleButton } from "@components";
 import { AuthLayout } from "@layouts";
-import { auth, AuthErrorResponse } from "@utils/firebase";
-import { AuthErrorCodes, signInWithEmailAndPassword } from "firebase/auth";
+import { auth, AuthErrorResponse, fs } from "@utils/firebase";
+import { AuthErrorCodes, createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { Form, Formik } from "formik";
 import { NextPage } from "next";
 import { default as NextLink } from "next/link";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import * as Yup from "yup";
-
-interface LoginData {
+interface RegisterData {
   email: string;
   password: string;
-  stay: boolean;
+  confirmPassword: string;
 }
 
-const Login: NextPage = () => {
+const Register: NextPage = () => {
   const toast = useToast();
-  const router = useRouter();
   const [showPW, setShowPW] = useState(false);
+  const [showCPW, setShowCPW] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
-  const handleSubmit = async (values: LoginData) => {
+  const handleSubmit = async (values: RegisterData) => {
     setLoading(true);
     const fData = {
       email: values.email.trim(),
       password: values.password.trim(),
     };
-    signInWithEmailAndPassword(auth, fData.email, fData.password)
+    createUserWithEmailAndPassword(auth, fData.email, fData.password)
       .then(({ user }) => {
         setLoading(false);
-        if (!toast.isActive("login-success")) {
+
+        setDoc(doc(fs, "users", user.uid), {
+          createdAt: Timestamp.now(),
+        });
+
+        if (!toast.isActive("reg-success")) {
           toast({
-            id: "login-success",
-            title: "Login Success",
-            description: `Welcome back to Mercury`,
+            id: "reg-success",
+            title: "Registration Success",
+            description: "Welcome to Mercury.",
             status: "success",
             duration: 3000,
             isClosable: true,
@@ -67,8 +69,8 @@ const Login: NextPage = () => {
         setLoading(false);
 
         switch (code) {
-          case AuthErrorCodes.CREDENTIAL_ALREADY_IN_USE:
-            eMessage = AuthErrorResponse.CredentialAlreadyInUse;
+          case AuthErrorCodes.EMAIL_EXISTS:
+            eMessage = AuthErrorResponse.EmailExists;
             break;
           case AuthErrorCodes.USER_DISABLED:
             eMessage = AuthErrorResponse.UserDisabled;
@@ -78,10 +80,10 @@ const Login: NextPage = () => {
             break;
         }
 
-        if (!toast.isActive("login-fail")) {
+        if (!toast.isActive("reg-fail")) {
           toast({
-            id: "login-fail",
-            title: "Login Failed",
+            id: "reg-fail",
+            title: "Registration Failed",
             description: eMessage,
             status: "error",
             duration: 3000,
@@ -93,23 +95,23 @@ const Login: NextPage = () => {
 
   return (
     <AuthLayout
-      title="Login"
-      description="Login to your account with Mercury. We support integrations with Google, Github or Email to upload, save and like blog posts for free!"
+      title="Register"
+      description="Register for an account with Mercury. We support integrations with Google, Github or Email to upload, save and like blog posts for free!"
     >
       <VStack px={6} py={12} gap={6} minH={"100vh"} justifyContent={"center"}>
-        <AuthHeader heading="Sign in to Mercury" />
+        <AuthHeader heading="Sign up with Mercury" />
         <FormContainer>
           <Formik
             initialValues={{
               email: "",
               password: "",
-              stay: false,
+              confirmPassword: "",
             }}
+            validationSchema={RegisterSchema}
             onSubmit={handleSubmit}
-            validationSchema={LoginSchema}
           >
             {({ values, errors, touched, handleChange, handleBlur }) => (
-              <Form autoComplete={"off"}>
+              <Form>
                 <Stack gap={6}>
                   <FormControl m={"0 !important"} isInvalid={touched.email && !!errors.email}>
                     <FormLabel>Email</FormLabel>
@@ -118,6 +120,7 @@ const Login: NextPage = () => {
                       onBlur={handleBlur}
                       value={values.email}
                       onChange={handleChange}
+                      autoComplete={"new-email"}
                     />
                     <FormErrorMessage>{errors.email}</FormErrorMessage>
                   </FormControl>
@@ -127,10 +130,9 @@ const Login: NextPage = () => {
                       <Input
                         name={"password"}
                         onBlur={handleBlur}
-                        variant={"outline"}
                         value={values.password}
                         onChange={handleChange}
-                        autoComplete={"password"}
+                        autoComplete={"new-password"}
                         type={showPW ? "text" : "password"}
                       />
                       <InputRightElement>
@@ -138,39 +140,55 @@ const Login: NextPage = () => {
                           size={"sm"}
                           variant={"ghost"}
                           onClick={() => setShowPW(!showPW)}
-                          aria-label={"toggle password visibility"}
+                          aria-label={"Toggle password visibility"}
                         >
                           {showPW ? <ViewIcon /> : <ViewOffIcon />}
                         </IconButton>
                       </InputRightElement>
                     </InputGroup>
-                    <FormErrorMessage>{errors.password}</FormErrorMessage>
+                    <FormErrorMessage wordBreak={"break-word"} overflowWrap={"break-word"}>
+                      {errors.password}
+                    </FormErrorMessage>
                   </FormControl>
-                  <Stack
-                    align={"start"}
-                    justify={"space-between"}
-                    direction={{
-                      base: "column",
-                      sm: "row",
-                    }}
+                  <FormControl
+                    m={"0 !important"}
+                    isInvalid={touched.confirmPassword && !!errors.confirmPassword}
                   >
-                    <Checkbox name={"stay"} colorScheme={"purple"} onChange={handleChange}>
-                      Remember me
-                    </Checkbox>
-                    <chakra.span color={"purple.400"}>Forgot password?</chakra.span>
-                  </Stack>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <InputGroup>
+                      <Input
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        name={"confirmPassword"}
+                        autoComplete={"new-password"}
+                        value={values.confirmPassword}
+                        type={showCPW ? "text" : "password"}
+                      />
+                      <InputRightElement>
+                        <IconButton
+                          size={"sm"}
+                          variant={"ghost"}
+                          onClick={() => setShowCPW(!showCPW)}
+                          aria-label={"Toggle confirm password visibility"}
+                        >
+                          {showCPW ? <ViewIcon /> : <ViewOffIcon />}
+                        </IconButton>
+                      </InputRightElement>
+                    </InputGroup>
+                    <FormErrorMessage>{errors.confirmPassword}</FormErrorMessage>
+                  </FormControl>
                   <Button type={"submit"} disabled={isLoading} isLoading={isLoading}>
-                    {isLoading ? "Attempting to sign you in" : "Sign in"}
+                    {isLoading ? "Attempting to register an account" : "Register now!"}
                   </Button>
                 </Stack>
               </Form>
             )}
           </Formik>
         </FormContainer>
-        <Text align={"center"}>
-          No account?{" "}
-          <NextLink href={"/auth/register"} passHref>
-            <Link color={"purple.400"}>Create one now!</Link>
+        <Text align="center">
+          Already have an account?{" "}
+          <NextLink href={"/login"} passHref>
+            <Link color={"purple.400"}>Log in now!</Link>
           </NextLink>
         </Text>
         <VStack gap={2}>
@@ -179,17 +197,27 @@ const Login: NextPage = () => {
             <Text>Or</Text>
             <Divider borderColor={useColorModeValue("blackAlpha.400", "whiteAlpha.400")} />
           </Flex>
-          <GithubButton />
-          <GoogleButton />
+          <GithubButton text={"Register with Github"} />
+          <GoogleButton text={"Register with Google"} />
         </VStack>
       </VStack>
     </AuthLayout>
   );
 };
 
-const LoginSchema = Yup.object({
-  email: Yup.string().email("Email is invalid.").required("Email is required."),
-  password: Yup.string().min(8, "Password is invalid.").required("Password is required."),
+const RegisterSchema = Yup.object({
+  username: Yup.string().max(48, "Must be 48 characters or less"),
+  email: Yup.string().email("Please enter a valid email.").required("Email is required."),
+  password: Yup.string()
+    .min(8, "Password has to be longer than 8 characters.")
+    .matches(
+      RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/),
+      "Minimum eight characters, at least one uppercase letter, one lowercase letter and one number."
+    )
+    .required("Password is required."),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password")], "Passwords do not match")
+    .required("Please confirm your password."),
 });
 
-export default Login;
+export default Register;

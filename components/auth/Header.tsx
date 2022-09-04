@@ -1,4 +1,4 @@
-import { Heading, Link, Stack, Text } from "@chakra-ui/react";
+import { Heading, Link, Stack, Text, useColorModeValue } from "@chakra-ui/react";
 import { FC } from "react";
 
 const AuthHeader: FC<{ heading: string }> = ({ heading }) => {
@@ -7,7 +7,7 @@ const AuthHeader: FC<{ heading: string }> = ({ heading }) => {
       <Heading fontSize={"4xl"} lineHeight={1}>
         {heading}
       </Heading>
-      <Text fontSize={"lg"} color={"gray.500"}>
+      <Text fontSize={"lg"} color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}>
         to enjoy all of our cool <Link color={"purple.400"}>Features</Link>
         ✌️
       </Text>

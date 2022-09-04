@@ -25,6 +25,7 @@ export enum AuthErrorResponse {
   CredentialAlreadyInUse = "This email is connected to another service",
   EmailExists = "The email is already in use",
   UserDisabled = "Email has been disabled",
+  NeedConfirmation = "This email is connected to another service",
 }
 
 export type AuthErrorCode = typeof AuthErrorCodes[keyof typeof AuthErrorCodes];

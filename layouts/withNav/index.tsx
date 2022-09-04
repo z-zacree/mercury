@@ -75,7 +75,7 @@ const NavbarLayout: FC<LayoutProps> = ({ children, title, description }) => {
                   ) : (
                     <>
                       <IconButton icon={<TbSearch />} aria-label={"Search"} onClick={onOpen} />
-                      <Button size={"md"} onClick={() => router.push("/auth/login")}>
+                      <Button size={"md"} onClick={() => router.push("/login")}>
                         Login
                       </Button>
                       <Button
@@ -84,7 +84,7 @@ const NavbarLayout: FC<LayoutProps> = ({ children, title, description }) => {
                           base: "none",
                           md: "inline-flex",
                         }}
-                        onClick={() => router.push("/auth/register")}
+                        onClick={() => router.push("/register")}
                       >
                         Sign Up
                       </Button>

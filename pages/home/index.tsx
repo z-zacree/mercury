@@ -11,7 +11,7 @@ const Home: NextPage = () => {
       description="Welcome to Mercury, a blog website catered to finding places of interest in Singapore."
     >
       <span>Home</span>
-      <Button onClick={() => signOut(auth)}></Button>
+      <Button onClick={() => signOut(auth)}>Sign out</Button>
     </NavLayout>
   );
 };

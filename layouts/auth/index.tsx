@@ -17,7 +17,7 @@ const AuthLayout: FC<LayoutProps> = ({ children, description, title }) => {
   } = useContext(AuthContext);
   useEffect(() => {
     if (!isLoading && user) {
-      if (!data?.fullname || !data?.username) router.push("/auth/account-details");
+      if (!data?.fullname || !data?.username) router.push("/account-details");
       else router.push("/home");
     }
   }, [user]);
